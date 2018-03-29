@@ -12,4 +12,19 @@ node('docker_it') {
 	stage ('Integration test') {
 		sh 'mvn clean verify -Dsurefire.skip=true';
 		}
+	stage ('Publish to Artifactory') {
+		def server = Artifactory.server 'Default Artifactory Server'
+		def uploadSpec = """{
+		"files": [
+		{
+		"pattern": "target/hello-0.0.1.war",
+		"target": "sample-java-prjct/${BUILD_NUMBER}/",
+			"props": "Integration-Tested=Yes;Performance-Tested=No"
+		}
+			]
+	}"""
+	server.upload(uploadSpec)
+	}
+		stash includes: 'target/hello-0.0.1.war,src/pt/Hello_World_Test_Plan.jmx', name: 'binary'
 }
+
