@@ -1,7 +1,11 @@
-node {
+node ('ubu_slave') {
 	stage('Poll') {
 	checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'c4abbfe5-7b64-44d6-b375-5d85c4c4ac02', url: 'https://github.com/vickydev90/sparkjava-war-example.git']]])
 	}
+	
+	stage('formatter') {
+		sh 'mvn install'
+		}
 	stage('Build') {
 		sh 'mvn clean verify -DskipITs=true';
 		}
